@@ -1,5 +1,5 @@
-require File.join(File.dirname(__FILE__), 'adapters', 'socrata_base')
-Dir[File.join(File.dirname(__FILE__), 'adapters', '*.rb')].each { |file| require file }
+require File.join(File.dirname(__FILE__), 'adapters', 'socrata', 'base')
+Dir[File.join(File.dirname(__FILE__), 'adapters', 'socrata', '*.rb')].each { |file| require file }
 require File.join(File.dirname(__FILE__), 'hash_cache')
 require File.join(File.dirname(__FILE__), 'utils')
 require 'faraday'

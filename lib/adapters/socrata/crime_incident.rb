@@ -1,4 +1,4 @@
-class CrimeIncident < SocrataBase
+class CrimeIncident < Socrata::Base
   SOCRATA_ENDPOINT = 'http://data.sfgov.org/resource/tmnf-yvry.json'
 
 # Text from https://github.com/citygram/citygram-services/issues/23
