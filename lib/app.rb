@@ -16,49 +16,17 @@ geocoder_cache = HashCache.new
 # Registry of available adapter classes.
 # Keys are the route, values are the class to use.
 adapters = {
+  'tree-planting' => TreePlanting,
   'street-use-permits' => StreetUsePermit,
   'food-truck-permits' => FoodTruckPermit,
   'new-business-location' => NewBusinessLocation,
-  'crime-incidents' => CrimeIncident
+  'crime-incidents' => CrimeIncident,
 }
 
 get '/' do
   endpoints = %w[tree-planting tow-away-zones] + adapters.keys
 	content_type :html
   endpoints.collect{ |ep| "<a href='#{request.url}#{ep}'>#{request.url}#{ep}</a>" }.join("<br />")
-end
-
-get '/tree-planting' do
-  url = URI('http://data.sfgov.org/resource/tkzw-k3nq.json')
-  url.query = Faraday::Utils.build_query(
-    '$order' => 'plantdate DESC',
-    '$limit' => 100,
-    '$where' => "treeid IS NOT NULL"+
-    " AND permitnotes IS NOT NULL"+
-    " AND latitude IS NOT NULL"+
-    " AND longitude IS NOT NULL"+
-    " AND plantdate > '#{(DateTime.now - 365).iso8601}'"
-  )
-  connection = Faraday.new(url: url.to_s)
-  response = connection.get
-  collection = JSON.parse(response.body)
-  features = collection.map do |record|
-    {
-      'id' => record['treeid'],
-      'type' => 'Feature',
-      'properties' => record.merge('title' => record['permitnotes']),
-      'geometry' => {
-        'type' => 'Point',
-        'coordinates' => [
-          record['longitude'].to_f,
-          record['latitude'].to_f
-        ]
-      }
-    }
-  end
-
-  content_type :json
-  JSON.pretty_generate('type' => 'FeatureCollection', 'features' => features)
 end
 
 get '/tow-away-zones' do
