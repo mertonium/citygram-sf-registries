@@ -25,7 +25,7 @@ describe TreePlanting do
   describe "#fancy_title" do
     it "returns the nicely formatted title message" do
       subject = TreePlanting.new(api_response)
-      exp_title = "A new tree has been planted near you by the SF Department of Public Works at 690 Brussels St! It is a Acer Rubrum :: Red Maple and has been planted at a Sidewalk: Curb side : Cutout."
+      exp_title = "A new tree has been planted near you by the SF Department of Public Works at 690 Brussels St! It is a Red Maple (Acer rubrum) and has been planted in a curbside sidewalk cutout."
       expect(subject.fancy_title).to eq(exp_title)
     end
   end
