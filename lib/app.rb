@@ -24,7 +24,7 @@ adapters = {
 }
 
 get '/' do
-  endpoints = %w[tree-planting tow-away-zones] + adapters.keys
+  endpoints = %w[tow-away-zones] + adapters.keys
 	content_type :html
   endpoints.collect{ |ep| "<a href='#{request.url}#{ep}'>#{request.url}#{ep}</a>" }.join("<br />")
 end
