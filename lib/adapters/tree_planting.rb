@@ -4,7 +4,7 @@ class TreePlanting < SocrataBase
 # Text from https://github.com/citygram/citygram-services/issues/21
 TITLE_TEMPLATE = <<-CFA.gsub(/\s*\n/, ' ').chomp(' ')
 A new tree has been planted near you by the SF Department of Public Works
-at %{address}! It is a %{species} and has been planted at a %{site_info}.
+at %{address}! It is a %{species} and has been planted in a %{site_info}.
 CFA
 
   def self.query_url
@@ -26,8 +26,8 @@ CFA
   def fancy_title
     title_pieces = {
       :address => Utils.titleize(@record['qaddress']),
-      :species => Utils.titleize(@record['qspecies']),
-      :site_info => @record['qsiteinfo'],
+      :species => humanize_species(@record['qspecies']),
+      :site_info => humanize_site_info(@record['qsiteinfo']),
     }
 
     TITLE_TEMPLATE % title_pieces
@@ -55,5 +55,37 @@ CFA
       'longitude' => @record['longitude'],
       'latitude' => @record['latitude'],
     }
+  end
+
+  private
+
+  def humanize_species(qspecies)
+    species_pieces = qspecies.split('::').map(&:strip)
+
+    if species_pieces.length == 1
+      # When there is only one piece to the name, it's usually "tree".
+      species_pieces[0].downcase.gsub(/\(s\)/,'')
+    else
+      "#{species_pieces[1]} (#{species_pieces[0]})"
+    end
+  end
+
+  def humanize_site_info(qsiteinfo)
+    case qsiteinfo
+    when 'Sidewalk: Curb side : Cutout'
+      'curbside sidewalk cutout'
+    when 'Sidewalk: Curb side : Yard'
+      'curbside yard'
+    when 'Sidewalk: Property side : Cutout'
+      'property-side sidewalk cutout'
+    when 'Median : Cutout'
+      'median cutout'
+    when 'Front Yard : Cutout'
+      'front yard cutout'
+    when 'Front Yard : Yard'
+      'front yard'
+    else
+      qsiteinfo
+    end
   end
 end
